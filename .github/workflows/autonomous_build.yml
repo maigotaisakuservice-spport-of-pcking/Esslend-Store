@@ -1,0 +1,87 @@
+name: TekipakiPC Autonomous Developer
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      game_version:
+        description: 'Game Version (e.g. 1.0.1)'
+        required: true
+        default: '1.0.0'
+      is_update:
+        description: 'Update from update.pdf?'
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [Win64, Android]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 1. Setup Virtual Display (Xvfb) for Unity
+      - name: Setup Virtual Display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libegl1-mesa libgl1-mesa-glx
+          Xvfb :99 -screen 0 1024x768x24 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+
+      # 2. Cache WebLLM Models
+      - name: Cache WebLLM Models
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/mlc-ai
+          key: webllm-model-qwen2.5-1.5b-v1
+
+      # 3. Run Autonomous AI Agent
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install Node Dependencies
+        run: npm install
+      - name: Run Autonomous AI Agent
+        env:
+          GAME_VERSION: ${{ github.event.inputs.game_version }}
+          GAME_UPDATE: ${{ github.event.inputs.is_update }}
+        run: node agent/main_controller.js
+
+      # 4. Unity Build (Game-CI)
+      - name: Build Unity Project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_TARGET: ${{ matrix.target }}
+          GAME_VERSION: ${{ github.event.inputs.game_version }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          ANDROID_KEYALIAS_PASS: ${{ secrets.ANDROID_KEYALIAS_PASS }}
+        with:
+          targetPlatform: ${{ matrix.target }}
+          unityVersion: 2022.3.15f1
+          buildMethod: AutoBuilder.BuildForTarget
+          projectPath: UnityProject
+
+      # 5. Package Windows Build
+      - name: Compress Windows Build
+        if: matrix.target == 'Win64'
+        run: |
+          zip -r Builds/TekipakiPC-Game-Windows.zip Builds/Windows/
+
+      # 6. Upload Artifacts
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-build-${{ matrix.target }}
+          path: |
+            Builds/TekipakiPC-Game-Windows.zip
+            Builds/Android/*.apk
+            Builds/Android/*.aab
