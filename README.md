@@ -18,8 +18,16 @@ Androidビルドを行うには、以下の手順でSecretsを設定してくだ
    - `ANDROID_KEYSTORE_PASS`: `tekipaki2026gameesslend012KmaidjA`
    - `ANDROID_KEYALIAS_PASS`: `tekipaki2026gameesslend012KmaidjA`
 
-### 2. Unityライセンスの設定
-GitHub ActionsでUnityを動かすために、`UNITY_LICENSE` をSecretに登録する必要があります（Game-CIのドキュメントを参照）。
+### 2. Unityライセンスの設定（UNITY_LICENSE）
+GitHub Actions上でUnityをビルドするには、Unityのライセンス情報を `UNITY_LICENSE` としてSecretに登録する必要があります。
+
+#### 取得手順 (Personalライセンスの場合):
+1. **ALFファイルの生成**: GitHub Actionsの `Unity Activation (Generate ALF)` ワークフローを手動実行します。実行完了後、Artifactsから `.alf` ファイルをダウンロードします。
+2. **手動アクティベーション**: [Unity Manual Activation](https://license.unity3d.com/manual) サイトにアクセスし、生成した `.alf` ファイルをアップロードします。
+3. **ULFファイルの取得**: サイトから `.ulf` ファイル（ライセンスファイル）をダウンロードします。
+4. **Secretへの登録**: ダウンロードした `.ulf` ファイルの内容をすべてコピーし、GitHubリポジトリの `Settings > Secrets and variables > Actions` に `UNITY_LICENSE` という名前で保存してください。
+
+詳細な手順は [Game-CI Documentation (Activation)](https://game.ci/docs/github/activation) を参照してください。
 
 ## 使い方
 

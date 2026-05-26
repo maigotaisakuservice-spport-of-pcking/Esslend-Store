@@ -33,7 +33,7 @@ async function main() {
 
         // Task: Generate Player Controller
         console.log("Generating PlayerController.cs using WebLLM...");
-        const playerPrompt = `Based on these specs: ${specs}\nGenerate a C# PlayerController script for a 2D star collecting game. Include movement and basic collision detection for triggers.`;
+        const playerPrompt = `Main Specs: ${specs}\n${updateSpecs ? "Update Specs: " + updateSpecs : ""}\nGenerate a C# PlayerController script for a 2D star collecting game. Include movement and basic collision detection for triggers.`;
         const playerCode = await webLLMClient.generateResponse(systemPrompt, playerPrompt);
 
         const scriptsDir = path.join(__dirname, '../UnityProject/Assets/Scripts');
@@ -45,7 +45,7 @@ async function main() {
 
         // Task: Generate Game Manager
         console.log("Generating GameManager.cs using WebLLM...");
-        const gmPrompt = `Based on these specs: ${specs}\nGenerate a C# GameManager script to handle score and game state.`;
+        const gmPrompt = `Main Specs: ${specs}\n${updateSpecs ? "Update Specs: " + updateSpecs : ""}\nGenerate a C# GameManager script to handle score and game state.`;
         const gmCode = await webLLMClient.generateResponse(systemPrompt, gmPrompt);
 
         const gmScriptPath = path.join(scriptsDir, 'GameManager.cs');
