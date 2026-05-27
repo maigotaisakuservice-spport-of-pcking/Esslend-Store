@@ -11,7 +11,8 @@ class WebLLMClient {
         // In a Node environment, this requires appropriate environment setup (GPU/Vulkan etc.)
         // For GitHub Actions, we assume the environment is set up as per workflow.
         this.engine = await CreateMLCEngine(this.modelId, {
-            initProgressCallback: (report) => console.log(report.text)
+            initProgressCallback: (report) => console.log(report.text),
+            device: "cpu" // Explicitly set to CPU for CI environments
         });
     }
 
