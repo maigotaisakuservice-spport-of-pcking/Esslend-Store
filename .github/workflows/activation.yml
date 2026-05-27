@@ -1,23 +1,16 @@
-name: Unity Activation (Generate ALF)
-
-on:
-  workflow_dispatch:
+name: Get Unity Activation File
+on: workflow_dispatch # ブラウザから手動で実行するためのボタン
 
 jobs:
   activation:
-    name: Generate .alf file
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Generate license request
+      - uses: actions/checkout@v4
+      - name: Request manual activation file
         uses: game-ci/unity-request-activation-file@v2
-        with:
-          unityVersion: 2022.3.15f1
-
-      - name: Upload .alf file as artifact
+        id: get-alf
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Unity_v2022.3.15f1.alf
-          path: ./*.alf
+          name: activation-file
+          path: ${{ steps.get-alf.outputs.filePath }}
