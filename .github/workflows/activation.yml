@@ -1,4 +1,4 @@
-name: Get Unity Activation File (No Docker)
+name: Get Unity Activation File (Final)
 on: workflow_dispatch
 
 jobs:
@@ -7,12 +7,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. Unityの極小版(Linux用)をダウンロードして解凍
-      - name: Download Unity Editor
+      # 1. Unity公式のCDNから、Linux用エディタ（本物）を直接ダウンロードして解凍
+      - name: Download Real Unity Editor (Linux)
         run: |
-          wget -q https://download.unity3d.com/download_unity/abc123xyz/LinuxEditorInstaller/Unity.tar.xz
+          wget -q https://download.unity3d.com/download_unity/90c1031af011/LinuxEditorInstaller/Unity.tar.xz
           mkdir -p unity-editor
-          tar -xf Unity.tar.xz -C unity-editor --strip-components=1 || true
+          tar -xf Unity.tar.xz -C unity-editor --strip-components=1
 
       # 2. 直接Unityを実行して .alf ファイルを生成
       - name: Request manual activation file
@@ -24,7 +24,7 @@ jobs:
             -manualLicenseFile \
             -quit || true
 
-      # 3. 生成されたファイルをカレントディレクトリに集めてアップロード
+      # 3. 生成されたファイルを確実にアップロード
       - name: Upload .alf Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -32,3 +32,4 @@ jobs:
           path: |
             ./*.alf
             /home/runner/.local/share/unity3d/Unity/*.alf
+            /home/runner/Unity/*.alf
