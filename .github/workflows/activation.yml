@@ -1,4 +1,4 @@
-name: Get Unity Activation File (Official)
+name: Get Unity Activation File (Fixed)
 on: workflow_dispatch
 
 jobs:
@@ -7,22 +7,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. 確実に .alf ファイルだけを生成させるコマンド
+      # 1. 正しいDockerイメージで .alf ファイルを生成
       - name: Request manual activation file
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/project" \
-            -e "UNITY_LICENSE=" \
-            unityci/editor:ubuntu-2022.3.20f1-base-3.0.0 \
+            unityci/editor:ubuntu-2022.3.20f1-1 \
             unity-editor \
             -logFile /dev/stdout \
             -manualLicenseFile \
-            -quit
+            -quit || true 
+            # ↑エラーでワークフローが途中で止まるのを防ぐため、あえて正常終了(true)扱いにします
 
-      # 2. 生成された .alf ファイルを GitHub にアップロード
+      # 2. 生成された .alf ファイルを確実にアップロード
       - name: Upload .alf Artifact
         uses: actions/upload-artifact@v4
-        if: always() # 上のコマンドがエラー（終了コード1）になっても絶対に実行する
         with:
           name: unity-activation-file
-          path: ./**/*.alf
+          path: ./*.alf
