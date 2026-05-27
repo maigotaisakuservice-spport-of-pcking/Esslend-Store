@@ -1,4 +1,4 @@
-name: Get Unity Activation File (New)
+name: Get Unity Activation File (Official)
 on: workflow_dispatch
 
 jobs:
@@ -7,17 +7,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # わざとライセンス無しの状態でUnityを動かし、.alfを生成させる
-      - uses: game-ci/unity-builder@v4
-        id: unity-build
-        continue-on-error: true # エラーになっても途中で止めない
-        with:
-          projectPath: .
-          targetPlatform: StandaloneLinux64 # 何でもいいので軽量なプラットフォーム
+      # 1. 確実に .alf ファイルだけを生成させるコマンド
+      - name: Request manual activation file
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/project" \
+            -e "UNITY_LICENSE=" \
+            unityci/editor:ubuntu-2022.3.20f1-base-3.0.0 \
+            unity-editor \
+            -logFile /dev/stdout \
+            -manualLicenseFile \
+            -quit
 
-      # 生成された .alf ファイルをダウンロードできるように保存
+      # 2. 生成された .alf ファイルを GitHub にアップロード
       - name: Upload .alf Artifact
         uses: actions/upload-artifact@v4
+        if: always() # 上のコマンドがエラー（終了コード1）になっても絶対に実行する
         with:
           name: unity-activation-file
           path: ./**/*.alf
