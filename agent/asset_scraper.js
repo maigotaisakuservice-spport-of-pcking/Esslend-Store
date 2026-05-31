@@ -11,6 +11,7 @@ class AssetScraper {
 
     ensureDir() {
         fs.ensureDirSync(this.assetsDir);
+        fs.ensureDirSync(path.dirname(this.creditsPath));
         if (!fs.existsSync(this.creditsPath)) {
             const initialCredits = [
                 {
