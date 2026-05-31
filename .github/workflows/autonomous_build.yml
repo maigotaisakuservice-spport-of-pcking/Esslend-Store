@@ -55,10 +55,12 @@ jobs:
         run: node agent/main_controller.js
 
       # 4. Unity Build (Game-CI)
+      # UNITY_LICENSE is omitted to trigger dynamic licensing via EMAIL and PASSWORD
       - name: Build Unity Project
         uses: game-ci/unity-builder@v4
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_TARGET: ${{ matrix.target }}
           GAME_VERSION: ${{ github.event.inputs.game_version }}
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -70,13 +72,21 @@ jobs:
           buildMethod: AutoBuilder.BuildForTarget
           projectPath: UnityProject
 
-      # 5. Package Windows Build
+      # 5. Return Unity License (Crucial to prevent seat exhaustion)
+      - name: Return Unity License
+        if: always()
+        uses: game-ci/unity-return-license@v2
+        with:
+          unityEmail: ${{ secrets.UNITY_EMAIL }}
+          unityPassword: ${{ secrets.UNITY_PASSWORD }}
+
+      # 6. Package Windows Build
       - name: Compress Windows Build
         if: matrix.target == 'Win64'
         run: |
           zip -r Builds/TekipakiPC-Game-Windows.zip Builds/Windows/
 
-      # 6. Upload Artifacts
+      # 7. Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
