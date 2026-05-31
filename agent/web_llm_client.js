@@ -1,5 +1,3 @@
-const { CreateMLCEngine } = require("@mlc-ai/web-llm");
-
 class WebLLMClient {
     constructor() {
         this.modelId = "Qwen2.5-1.5B-Instruct-q4f16_1-MLC";
@@ -10,6 +8,10 @@ class WebLLMClient {
         console.log(`Initializing WebLLM with model: ${this.modelId}`);
         // In a Node environment, this requires appropriate environment setup (GPU/Vulkan etc.)
         // For GitHub Actions, we assume the environment is set up as per workflow.
+
+        // Use dynamic import for ESM compatibility
+        const { CreateMLCEngine } = await import("@mlc-ai/web-llm");
+
         this.engine = await CreateMLCEngine(this.modelId, {
             initProgressCallback: (report) => console.log(report.text),
             device: "cpu" // Explicitly set to CPU for CI environments

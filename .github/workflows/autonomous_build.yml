@@ -21,6 +21,9 @@ jobs:
       fail-fast: false
       matrix:
         target: [Win64, Android]
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
 
     steps:
       - name: Checkout Repository
@@ -55,12 +58,9 @@ jobs:
         run: node agent/main_controller.js
 
       # 4. Unity Build (Game-CI)
-      # UNITY_LICENSE is omitted to trigger dynamic licensing via EMAIL and PASSWORD
       - name: Build Unity Project
         uses: game-ci/unity-builder@v4
         env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_TARGET: ${{ matrix.target }}
           GAME_VERSION: ${{ github.event.inputs.game_version }}
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -76,9 +76,6 @@ jobs:
       - name: Return Unity License
         if: always()
         uses: game-ci/unity-return-license@v2
-        with:
-          unityEmail: ${{ secrets.UNITY_EMAIL }}
-          unityPassword: ${{ secrets.UNITY_PASSWORD }}
 
       # 6. Package Windows Build
       - name: Compress Windows Build
