@@ -1,0 +1,17 @@
+{
+  "name": "tekipakipc-autonomous-developer",
+  "version": "1.0.0",
+  "description": "Autonomous Unity Game Development System",
+  "main": "agent/main_controller.js",
+  "scripts": {
+    "start": "node agent/main_controller.js"
+  },
+  "dependencies": {
+    "@mlc-ai/web-llm": "^0.2.46",
+    "axios": "^1.6.0",
+    "pdf-parse": "^1.1.1",
+    "uuid": "^9.0.1",
+    "fs-extra": "^11.1.1",
+    "js-yaml": "^4.1.0"
+  }
+}

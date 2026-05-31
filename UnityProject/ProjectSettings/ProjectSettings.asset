@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!129 &1
+PlayerSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 25
+  productName: StarCollectingGame
+  companyName: TekipakiPC
+  packageVersion: 1.0.0
+  bundleVersion: 1.0.0
+  defaultInterfaceOrientation: 3
+  targetDevice: 2
+  usePlayerLog: 1
+  m_SupportedAspectRatios:
+    4:3: 1
+    5:4: 1
+    16:10: 1
+    16:9: 1
+    Others: 1
+  m_BuildTargetGroup: 13
+  m_BuildTarget: 13
+  m_ScriptingBackend: 0
+  m_ApiCompatibilityLevel: 3
+  m_TargetSdkVersion: 33
+  m_AndroidTargetSdkVersion: 33
+  m_AndroidMinSdkVersion: 24
+  m_AndroidPreferredInstallLocation: 1
+  m_AndroidShowActivityIndicatorOnLoading: 1
+  m_AndroidEnableBuildFiltering: 1
+  m_AndroidBuildApkPerCpuArchitecture: 0
+  m_AndroidTVCompatibility: 0
+  m_AndroidIsGame: 1
+  m_AndroidKeystoreName:
+  m_AndroidKeyaliasName:
+  m_AndroidKeystorePass:
+  m_AndroidKeyaliasPass:
+  m_AndroidUseCustomKeystore: 0
+  m_AndroidSplashScreenScale: 0
+  m_AndroidSplashScreenRotation: 0
+  m_AndroidBuildAppBundle: 1
